@@ -1,20 +1,20 @@
-import gradio as gr
+import streamlit as st
 import subprocess
+import os
 
-def run_code(code):
+st.title("Cloud IDE")
+
+code = st.text_area("Enter your Python code:", height=300)
+
+if st.button("Run Code"):
     try:
         with open("temp.py", "w") as f:
             f.write(code)
+
         result = subprocess.getoutput("python3 temp.py")
-        return result
+        st.text_area("Output:", result, height=200)
+
+        os.remove("temp.py")
+
     except Exception as e:
-        return str(e)
-
-interface = gr.Interface(
-    fn=run_code,
-    inputs=gr.Textbox(lines=10),
-    outputs="text",
-    title="Cloud IDE"
-)
-
-interface.launch(share=True)
+        st.error(str(e))
